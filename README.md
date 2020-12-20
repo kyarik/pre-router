@@ -215,24 +215,24 @@ interface RouterOptions {
 
 - `defaultFallback?: ComponentType` is the default fallback component to use for any route that didn't specify a custom `fallback`. The default fallback will be shown while the component or data for the route are loading.
 
-- `errorFallback?: ComponentType<{ error: Error; retry: () => void }>` is the error fallback component to show when an error occurs for some route, e.g., when the component or data for a route fails to load. This component is given two props: `error` and `retry`. `error` is the `Error` object and `retry` is a callback to retry loading the failed route. Generally, we should include a _Retry_ button in the error fallback, and use `retry` as its `onClick` prop.
+- `errorFallback?: ComponentType<{ error: Error; retry: () => void }>` is the error fallback component to show when an error occurs for some route, e.g., when the component or data for a route fails to load. This component is given two props: `error` and `retry`. `error` is the `Error` object and `retry` is a callback to retry loading the failed route. Generally, you should include a _Retry_ button in the error fallback, and pass `retry` as its `onClick` prop.
 
 - `history?: RouterHistory` (default: `'browser'`) specifies the type of history object to use for route navigation. The history object is created with the [`history` package](https://github.com/ReactTraining/history). `RouterHistory` can be one of the following:
 
   - `'browser'` creates a `BrowserHistory` that uses the [History API](https://developer.mozilla.org/en-US/docs/Web/API/History_API). The current route's path will be the actual path in the URL. For example, if the domain is `https://example.com` and the route path is `/profile`, then the URL for the page will be `https://example.com/profile`.
   - `'hash'` creates a `HashHistory`. The current route's path will be in the hash portion of the URL. For example, if the domain is `https://example.com`, the path under which the page loads is `/`, and the route path is `/profile`, then the URL for the page will be `https://example.com/#/profile`.
-  - `'memory'` creates a `MemoryHistory`. The current route's path will be stored in memory, so no URL changes will be happening as the user navigates from one route to another. Memory history should be used in non-borwser environments, such as in React Native.
+  - `'memory'` creates a `MemoryHistory`. The current route's path will be stored in memory, so no URL changes will be happening as the user navigates from one route to another. Memory history should be used in non-browser environments, such as React Native.
   - `['memory', MemoryHistoryOptions]` creates a `MemoryHistory`, just like for the `'memory'` option, but also allows to specify `MemoryHistoryOptions`, which consists of the following properties:
     - `initialEntries?: InitialEntry[]` are the initial entries in the history stack, e.g., `['/', '/photos', '/profile']`.
     - `initialIndex?: number` is the index of the initial entry. By default it's the index of the last entry.
 
 - `onError?: (error: Error, errorInfo: ErrorInfo) => void` is a callback that is called when an error occurs for some route, e.g., when the component or data for a route fails to load. This callback can be used to log the error information to an error reporting service.
 
-- `preloadOnLinkHover?: PreloadContent` (default: `'code'`) is the content to preload for the path pointed to by a link whenever the link is hovered. See [`PreloadContent`](#preloadcontent).
+- `preloadOnLinkHover?: PreloadContent` (default: `'code'`) is the content to preload for a link's path whenever the link is hovered. See [`PreloadContent`](#preloadcontent).
 
-- `preloadOnLinkPressIn?: PreloadContent` (default: `'code-and-data'`) is the content to preload for the path pointed to by a link whenever the link is pressed in (mouse down for desktop). See [`PreloadContent`](#preloadcontent).
+- `preloadOnLinkPressIn?: PreloadContent` (default: `'code-and-data'`) is the content to preload for a link's path whenever the link is pressed in (mouse down on desktop). See [`PreloadContent`](#preloadcontent).
 
-- `useTransition?: UseTransition` is the `useTransition` hook exported by React. At the moment, `useTransition` is only available in the experimental release of React, and you need to import it as `unstable_useTransition`. Furthermore, you need to have React Concurrent Mode enabled for `useTransition` to work (read more about [adopting React Concurrent Mode](https://reactjs.org/docs/concurrent-mode-adoption.html#installation)). When you pass the `useTransition` hook, you opt into having a delay during route updates in order to avoid showing undesirable loading states. If we perform a route update without a transition, the new route will render immediately and very likely suspend, showing its fallback component to the user in place of the old route's content. By performing the route update with a transition, we can defer the display of the new route and show the old route while new one is loading. You can use the [`useRouteTransitionPending`](#useroutetransitionpending) hook to know when a route transition is pending and show some sort of loading indicator (in the page header for example) so that the user knows that a route update is actually occuring while still seeing the old route.
+- `useTransition?: UseTransition` is the `useTransition` hook exported by React. At the moment, `useTransition` is only available in the experimental releases of React, and you need to import it as `unstable_useTransition`. Furthermore, you need to have React Concurrent Mode enabled for `useTransition` to work (read more about [adopting React Concurrent Mode](https://reactjs.org/docs/concurrent-mode-adoption.html#installation)). When you pass the `useTransition` hook, you opt into having a delay during route updates in order to avoid showing undesirable loading states. If we perform a route update without a transition, the new route will render immediately and very likely suspend, showing its fallback component to the user in place of the old route's content. By performing the route update with a transition, we can defer the display of the new route and show the old route while new one is loading. You can use the [`useRouteTransitionPending`](#useroutetransitionpending) hook to know when a route transition is pending and show some sort of loading indicator (in the page header for example) so that the user knows that a route update is actually occuring while still seeing the old route.
 
 ### `PreloadContent`
 
@@ -275,7 +275,7 @@ interface Router {
 
 - `options: Required<RouterOptions>` are the options provided to `createRouter` populated with default values for all options that were omitted.
 
-- `preloadBeforeNavigation: (path: string, content: PreloadContent) => void;` preloads the specified [`content`](#preloadcontent) for the given path before the navigation to that path actually occurs. This could be used to start loading code and data for a route even before the user navigates to it, if we know that the user will likely navigate to it. For example, we could start preloading content for a route in an event handler.
+- `preloadBeforeNavigation: (path: string, content: PreloadContent) => void;` preloads the specified [`content`](#preloadcontent) for the given path before the navigation to that path actually occurs. This could be used to start loading code and data for a route even before the user navigates to it, if we know that the user will likely navigate to it. For example, we could start preloading content for a route in an event handler. Note that if the specified `content` is already loaded or is loading for the given `path`, then this function has no effect.
 
 - `refreshCurrentRouterEntry: () => void` refreshes the current router entry by preloading again the components and data for the current entry. Note that if the components already loaded or are still loading, then preloading them again will have no effect.
 
@@ -285,7 +285,7 @@ interface Router {
 
 ### `<PreRouter>`
 
-`<PreRouter>` is the component that is responsible for rendering the routes of our app. It accepts a single `router` prop, which is the `Router` object that was creating with [`createRouter`](#createrouter).
+`<PreRouter>` is the component that is responsible for rendering the routes of your app. It accepts a single `router` prop, which is the `Router` object that was creating with [`createRouter`](#createrouter).
 
 **Example**
 
@@ -340,7 +340,7 @@ const ProfilePage = ({ signedInUser }) => {
     return <Redirect to="/sign-in" />;
   }
 
-  return <h1>Welcome ${signedInUser.name}</h1>;
+  return <h1>Welcome {signedInUser.name}</h1>;
 };
 ```
 
@@ -358,7 +358,7 @@ The `useRouteTransitionPending` hook returns a boolean indicating whether a rout
 
 ## Prior art
 
-This library was inspired by the router of the [Relay Hooks Example App](https://github.com/relayjs/relay-examples/tree/master/issue-tracker).
+`pre-router` was inspired by the router of the [Relay Hooks Example App](https://github.com/relayjs/relay-examples/tree/master/issue-tracker).
 
 ## Contributing
 
