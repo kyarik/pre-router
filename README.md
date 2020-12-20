@@ -82,7 +82,7 @@ const routes: Route[] = [
   {
     path: '/posts/:slug',
     component: lazyComponent(() => import('./PostPage')),
-    preloadData: ({ slug }) => preloadPostData(slug),
+    preloadData: ({ slug }) => preloadPost(slug),
   },
   {
     component: lazyComponent(() => import('./Page404')),
@@ -92,9 +92,9 @@ const routes: Route[] = [
 
 Notice that for the last route (the 404 route), we didn't specify a `path` so that it always matches.
 
-Routes are matched starting from the first one and as soon as we find a match, we stop. So, if no route matches a path, we end up reaching the 404 route, which always matches since no `path` was specified.
+`pre-router` matches routes starting from the first one and as soon as it finds a match, it stops. So, if no route matches a path, we end up reaching the 404 route, which always matches since it has no `path` specified.
 
-Even though all routes can be specified top-level, most apps have content around the route that often consists of the header and the footer, which might even require some data (e.g., showing the signed in user in the header). In that case, we should have a root component. For example:
+Even though all routes can be specified top-level, most apps have a container around the content that often consists of the header and the footer, which might even require some data (e.g., showing the signed in user in the header). In that case, we should have a `<Root>` component. For example:
 
 ```tsx
 const Root: RouteComponent = ({ children }) => (
@@ -106,7 +106,7 @@ const Root: RouteComponent = ({ children }) => (
 );
 ```
 
-and define it as the top-level route that always matches (so, no `path` is specified) with all the other routes defined as children routes:
+and define it as the top-level route that always matches (so, no `path` is specified) with all the other routes defined as child routes:
 
 ```ts
 const routes: Route[] = [
@@ -155,11 +155,11 @@ createRouter(routes: Route[], options?: RouterOptions): Router
 
 - `routes: Route[]` is an array with the definition of all routes. A `Route` object consists of the following properties:
 
-  - `path?: string` The path for which this route will match. Path parameters, even with custom regular expressions, are supported. For example, `/profile`, `/post/:slug`, and `/@:username([a-z]+)` are all valid paths. If no `path` is specified, then this route will always match. This can be used for the `404` route.
-  - `preloadData?: (params: any) => any` is the function used to preload data for the route whenever it matches. This function is called with the route parameters and it should return the preloaded data in the form of a resource that the route component can attempt to read and if it's not loaded yet, the component suspends.
-  - `component: ComponentType` is the component to render for the route. The component that is specified should be wrapped in `lazyComponent` so that it is code-split and it will start loading only when the route matches, in parallel with the data. This component will be passed the following props:
+  - `path?: string` The path for which this route will match. Path parameters, even with custom regular expressions, are supported. For example, `/profile`, `/posts/:slug`, and `/@:username([a-z]+)` are all valid paths. If no `path` is specified, then this route will always match. This can be used for the `404` route for example. When `pre-router` matches routes against a path, it stops at the first match on each level. So, if you have routes with overllaping paths, e.g., `/about` and `/:username`, place the route with the more specific path, i.e., `/about`, before the route the generic path, i.e., `/:username`.
+  - `preloadData?: (params: Record<string, string>) => any` is the function used to preload data for the route whenever it matches. This function is called with the route parameters and it should return the preloaded data in the form of a resource that the route component can attempt to read and if it's not ready yet, the component suspends.
+  - `component: RouteComponent` is the component to render for the route. The component that is specified should be wrapped in `lazyComponent` so that it is code-split and it will start loading only when the route matches, in parallel with the data. (Remember that the component needs to be the `default` export when using `lazyComponent`.) This component will be passed the following props:
     - `params` The values of the dynamic parameters in the `path`, if any. For example, if `path` is `/post/:slug`, then `params` could be `{ slug: 'an-interesting-post' }`.
-    - `preloadedData` is the prelaoded data returned by `preloadData`. This prop is passed only when `preloadData` is specified for the route.
+    - `preloadedData` is the preloaded data returned by `preloadData`. If `preloadData` is not specified for a route, then `preloadedData` is `undefined`.
     - `children` Any matching child routes that should be rendered inside the parent route.
   - `fallback?: ComponentType` is the optional fallback component that will be shown while the component or data for the route are still loading.
   - `routes?: Route[]` any children routes of the current route.
@@ -172,7 +172,7 @@ createRouter(routes: Route[], options?: RouterOptions): Router
 
 **Description**
 
-`createRouter` is used to create a router by specifying the definition for all our app's routes. The main properties in the definition of each route are the path, the function to preload the data for the route, and the component to render for the route. The created `Router` object can then be passed to the `PreRouter` component.
+`createRouter` is used to create a router by specifying the definition for all our app's routes. The main properties in the definition of each route are the path, the function to preload the data for the route, and the component to render for the route. The created `Router` object can then be passed to the `<PreRouter>` component.
 
 **Example**
 
@@ -180,7 +180,7 @@ createRouter(routes: Route[], options?: RouterOptions): Router
 const router = createRouter([
   {
     path: '/',
-    component: lazyComponent(() => import('./components/Homepage'), {
+    component: lazyComponent(() => import('./components/HomePage'), {
       autoRetry: true,
     }),
   },
@@ -189,57 +189,12 @@ const router = createRouter([
     component: lazyComponent(() => import('./components/PostPage'), {
       autoRetry: true,
     }),
-    preloadData: ({ slug }: { slug: string }) => preloadPost(slug),
+    preloadData: ({ slug }) => preloadPost(slug),
   },
   {
-    component: lazyComponent(() => import('./components/404'), {
+    component: lazyComponent(() => import('./components/Page404'), {
       autoRetry: true,
     }),
-  },
-]);
-```
-
-Even though all routes can be specified top-level as shown in this example, most apps have layout around the route component which often consists of the header and the footer. In that case, we should have a root component like this:
-
-```tsx
-const Root = ({ children }) => (
-  <>
-    <Header />
-    <Body>{children}</Body>
-    <Footer />
-  </>
-);
-```
-
-and define it as the top-level route that always matches (so, no `path` is specified) with all the other routes defined as children routes:
-
-```ts
-const router = createRouter([
-  {
-    component: lazyComponent(() => import('./components/Root'), {
-      autoRetry: true,
-    }),
-    preloadData: () => preloadUser(), // optionally preload data needed in header/footer
-    routes: [
-      {
-        path: '/',
-        component: lazyComponent(() => import('./components/Homepage'), {
-          autoRetry: true,
-        }),
-      },
-      {
-        path: '/post/:slug',
-        component: lazyComponent(() => import('./components/PostPage'), {
-          autoRetry: true,
-        }),
-        preloadData: ({ slug }: { slug: string }) => preloadPost(slug),
-      },
-      {
-        component: lazyComponent(() => import('./components/404'), {
-          autoRetry: true,
-        }),
-      },
-    ],
   },
 ]);
 ```
