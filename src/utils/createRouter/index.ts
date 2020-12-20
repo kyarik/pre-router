@@ -2,7 +2,7 @@ import { assertNever } from 'circumspect';
 import { parsePath } from 'history';
 import { preloadLazyComponent } from 'suspendable';
 import {
-  PreloadContent,
+  PreloadContentOption,
   PreloadedRoute,
   Route,
   Router,
@@ -86,7 +86,7 @@ export const createRouter = (routes: Route[], options: RouterOptions = {}): Rout
     preloadedRoutesBeforeNavigation.set(pathname, preloadedRoutes);
   };
 
-  const preloadBeforeNavigation = (path: string, content: PreloadContent) => {
+  const preloadBeforeNavigation = (path: string, content: PreloadContentOption) => {
     const { pathname } = parsePath(path);
 
     if (!pathname) {

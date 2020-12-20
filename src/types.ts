@@ -61,7 +61,7 @@ export interface RouterEntry {
 
 export type UseTransition = () => [(callback: () => void) => void, boolean];
 
-export type PreloadContent = 'code' | 'code-and-data' | 'none';
+export type PreloadContentOption = 'code' | 'code-and-data' | 'none';
 
 export type RouterHistory = 'browser' | 'hash' | 'memory' | ['memory', MemoryHistoryOptions];
 
@@ -70,8 +70,8 @@ export interface RouterOptions {
   errorFallback?: ComponentType<{ error: Error; retry: () => void }>;
   history?: RouterHistory;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
-  preloadOnLinkHover?: PreloadContent;
-  preloadOnLinkPressIn?: PreloadContent;
+  preloadOnLinkHover?: PreloadContentOption;
+  preloadOnLinkPressIn?: PreloadContentOption;
   useTransition?: UseTransition;
 }
 
@@ -82,7 +82,7 @@ export interface Router {
   history: BrowserHistory | MemoryHistory | HashHistory;
   isNextRouteTransitionEnabled: () => boolean;
   options: Required<RouterOptions>;
-  preloadBeforeNavigation: (path: string, content: PreloadContent) => void;
+  preloadBeforeNavigation: (path: string, content: PreloadContentOption) => void;
   refreshCurrentRouterEntry: () => void;
   removeHistoryListener: () => void;
   subscribe: (subscriber: (routerEntry: RouterEntry) => void) => () => void;

@@ -138,7 +138,7 @@ const App = () => <PreRouter router={router} />;
 
 - [`createRouter`](#createrouter)
 - [`RouterOptions`](#routeroptions)
-- [`PreloadContent`](#preloadcontent)
+- [`PreloadContentOption`](#preloadcontentoption)
 - [`Router`](#router)
 - [`<PreRouter>`](#prerouter)
 - [`<Link>`](#link)
@@ -207,8 +207,8 @@ interface RouterOptions {
   errorFallback?: ComponentType<{ error: Error; retry: () => void }>;
   history?: RouterHistory;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
-  preloadOnLinkHover?: PreloadContent;
-  preloadOnLinkPressIn?: PreloadContent;
+  preloadOnLinkHover?: PreloadContentOption;
+  preloadOnLinkPressIn?: PreloadContentOption;
   useTransition?: UseTransition;
 }
 ```
@@ -228,19 +228,19 @@ interface RouterOptions {
 
 - `onError?: (error: Error, errorInfo: ErrorInfo) => void` is a callback that is called when an error occurs for some route, e.g., when the component or data for a route fails to load. This callback can be used to log the error information to an error reporting service.
 
-- `preloadOnLinkHover?: PreloadContent` (default: `'code'`) is the content to preload for a link's path whenever the link is hovered. See [`PreloadContent`](#preloadcontent).
+- `preloadOnLinkHover?: PreloadContentOption` (default: `'code'`) is the content to preload for a link's path whenever the link is hovered. See [`PreloadContentOption`](#preloadcontentoption).
 
-- `preloadOnLinkPressIn?: PreloadContent` (default: `'code-and-data'`) is the content to preload for a link's path whenever the link is pressed in (mouse down on desktop). See [`PreloadContent`](#preloadcontent).
+- `preloadOnLinkPressIn?: PreloadContentOption` (default: `'code-and-data'`) is the content to preload for a link's path whenever the link is pressed in (mouse down on desktop). See [`PreloadContentOption`](#preloadcontentoption).
 
 - `useTransition?: UseTransition` is the `useTransition` hook exported by React. At the moment, `useTransition` is only available in the experimental releases of React, and you need to import it as `unstable_useTransition`. Furthermore, you need to have React Concurrent Mode enabled for `useTransition` to work (read more about [adopting React Concurrent Mode](https://reactjs.org/docs/concurrent-mode-adoption.html#installation)). When you pass the `useTransition` hook, you opt into having a delay during route updates in order to avoid showing undesirable loading states. If we perform a route update without a transition, the new route will render immediately and very likely suspend, showing its fallback component to the user in place of the old route's content. By performing the route update with a transition, we can defer the display of the new route and show the old route while new one is loading. You can use the [`useRouteTransitionPending`](#useroutetransitionpending) hook to know when a route transition is pending and show some sort of loading indicator (in the page header for example) so that the user knows that a route update is actually occuring while still seeing the old route.
 
-### `PreloadContent`
+### `PreloadContentOption`
 
 ```ts
-type PreloadContent = 'code' | 'code-and-data' | 'none';
+type PreloadContentOption = 'code' | 'code-and-data' | 'none';
 ```
 
-`PreloadContent` is used to specify what type of content to preload for a path even before the navigation to that path occurs. It can be one of the following:
+`PreloadContentOption` is used to specify what type of content to preload for a path even before the navigation to that path occurs. It can be one of the following:
 
 - `'code'` Preload only the code associated with the matching routes, i.e., the components. Note that the code is only loaded once, so it will not be loaded again if it already loaded or is loading.
 - `'code-and-data'` Preload both the code and the data associated with the matching routes.
@@ -256,7 +256,7 @@ interface Router {
   history: BrowserHistory | MemoryHistory | HashHistory;
   isNextRouteTransitionEnabled: () => boolean;
   options: Required<RouterOptions>;
-  preloadBeforeNavigation: (path: string, content: PreloadContent) => void;
+  preloadBeforeNavigation: (path: string, content: PreloadContentOption) => void;
   refreshCurrentRouterEntry: () => void;
   removeHistoryListener: () => void;
   subscribe: (subscriber: (routerEntry: RouterEntry) => void) => () => void;
@@ -275,7 +275,7 @@ interface Router {
 
 - `options: Required<RouterOptions>` are the options provided to `createRouter` populated with default values for all options that were omitted.
 
-- `preloadBeforeNavigation: (path: string, content: PreloadContent) => void;` preloads the specified [`content`](#preloadcontent) for the given path before the navigation to that path actually occurs. This could be used to start loading code and data for a route even before the user navigates to it, if we know that the user will likely navigate to it. For example, we could start preloading content for a route in an event handler. Note that if the specified `content` is already loaded or is loading for the given `path`, then this function has no effect.
+- `preloadBeforeNavigation: (path: string, content: PreloadContentOption) => void;` preloads the specified [`content`](#preloadcontentoption) for the given path before the navigation to that path actually occurs. This could be used to start loading code and data for a route even before the user navigates to it, if we know that the user will likely navigate to it. For example, we could start preloading content for a route in an event handler. Note that if the specified `content` is already loaded or is loading for the given `path`, then this function has no effect.
 
 - `refreshCurrentRouterEntry: () => void` refreshes the current router entry by preloading again the components and data for the current entry. Note that if the components already loaded or are still loading, then preloading them again will have no effect.
 
