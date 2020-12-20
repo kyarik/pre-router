@@ -2,9 +2,9 @@
 
 `pre-router` is a router for React with code and data preloading at its core.
 
-`pre-router` allows to specify for each route the component to render and the data to preload. Then, the code and data for the matching routes start loading in parallel right after the path changes, so even before rendering begins. This means that implementing the ["Render-as-You-Fetch" pattern](https://reactjs.org/docs/concurrent-mode-suspense.html#approach-3-render-as-you-fetch-using-suspense) is very natural with `pre-router`.
+`pre-router` allows you to specify for each route the component to render and the data to preload. Then, the code and data for the matching routes start loading in parallel right after the path changes, so even before rendering begins. This means that implementing the ["Render-as-You-Fetch" pattern](https://reactjs.org/docs/concurrent-mode-suspense.html#approach-3-render-as-you-fetch-using-suspense) is very natural with `pre-router`.
 
-Once we begin rendering the matching routes, if the code or data has not finished loading for a route, then it will suspend until code and data are loaded, showing a fallback.
+Once we begin rendering the matching routes, if the code or data has not finished loading for a route, then it will suspend until code and data are loaded, showing a fallback in the meantime.
 
 `pre-router` also gives you the ability to start loading code and data even before the user clicks on a link. If the user hovers over a link, there's a chance that they'll click it, so we could start loading the code for that route as soon as the user hovers. And if the user presses the mouse down on a link, there's a very good chance that they'll complete the click, so we could also start loading the data for the route as soon as the user presses in on the link.
 
@@ -22,7 +22,117 @@ Using npm:
 npm install pre-router suspendable
 ```
 
-Note that we also need to install `suspendable` in order to use `lazyComponent` for route components. `lazyComponent` is similar to `React.lazy` but has a few important differences like being able to start loading the component even before rendering it and clear any errors after a component fails to load. You can read more about the differences in the [`suspendable` README](https://github.com/kyarik/suspendable#lazycomponent).
+Note that you also need to install `suspendable` in order to use `lazyComponent` for route components. `lazyComponent` is similar to `React.lazy` but has a few important differences like being able to start loading the component even before rendering begins and clear any errors after a component fails to load. You can read more about the differences in the [`suspendable` README](https://github.com/kyarik/suspendable#lazycomponent).
+
+## Usage
+
+### Preloading data
+
+First, for each route that requires some data, we need to specify a function for preloading that data, which returns the preloaded data in the form of a resource that the route component can read synchronously, suspending if it's not ready yet.
+
+Here's a simple example using `lazyResource` from `suspendable`:
+
+```ts
+const preloadPost = (slug: string) => {
+  const resource = lazyResource(() => fetchPostBySlug(slug));
+
+  resource.load();
+
+  return resource;
+};
+```
+
+However, you can use whatever library you want to preload data, as long as it's compatible with React Suspense, i.e., it allows creating resources that make the component suspend if the resource is not ready yet.
+
+If you want to use a fetching library that is not compatible with React Suspense, you can still make it compatible by using the utils provided by `suspendable`.
+
+### Route components
+
+For each route, we need to specify a component, which needs to be the `default` export. For example:
+
+```tsx
+const PostPage: RouteComponent<PreloadedPostData> = ({ preloadedData, params }) => {
+  const post = preloadedData.read();
+
+  if (!post) {
+    return <h1>Post with slug '{params.slug}' not found.</h1>;
+  }
+
+  return <h1>{post.title}</h1>;
+};
+
+export default PostPage;
+```
+
+### Defining routes
+
+Next, we define all our routes by specifying for each the path, the component to use, and the data to preload:
+
+```ts
+const routes: Route[] = [
+  {
+    path: '/',
+    component: lazyComponent(() => import('./HomePage')),
+  },
+  {
+    path: '/profile',
+    component: lazyComponent(() => import('./ProfilePage')),
+    preloadData: () => preloadProfileData(),
+  },
+  {
+    path: '/posts/:slug',
+    component: lazyComponent(() => import('./PostPage')),
+    preloadData: ({ slug }) => preloadPostData(slug),
+  },
+  {
+    component: lazyComponent(() => import('./Page404')),
+  },
+];
+```
+
+Notice that for the last route (the 404 route), we didn't specify a `path` so that it always matches.
+
+Routes are matched starting from the first one and as soon as we find a match, we stop. So, if no route matches a path, we end up reaching the 404 route, which always matches since no `path` was specified.
+
+Even though all routes can be specified top-level, most apps have content around the route that often consists of the header and the footer, which might even require some data (e.g., showing the signed in user in the header). In that case, we should have a root component. For example:
+
+```tsx
+const Root: RouteComponent = ({ children }) => (
+  <>
+    <Header />
+    <Body>{children}</Body>
+    <Footer />
+  </>
+);
+```
+
+and define it as the top-level route that always matches (so, no `path` is specified) with all the other routes defined as children routes:
+
+```ts
+const routes: Route[] = [
+  {
+    component: lazyComponent(() => import('./Root')),
+    preloadData: () => preloadRootData(), // optionally preload data needed in header/footer
+    routes: [
+      {
+        path: '/',
+        component: lazyComponent(() => import('./HomePage')),
+      },
+      // ...
+    ],
+  },
+];
+```
+
+### Rendering routes
+
+Finally, to render the routes, we create a router and pass it to the `<PreRouter>` component:
+
+```tsx
+const router = createRouter(routes);
+
+const App = () => <PreRouter router={router} />;
+```
 
 ## API
 
@@ -75,7 +185,7 @@ const router = createRouter([
     }),
   },
   {
-    path: '/post/:slug',
+    path: '/posts/:slug',
     component: lazyComponent(() => import('./components/PostPage'), {
       autoRetry: true,
     }),
