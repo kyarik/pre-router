@@ -1,23 +1,23 @@
 import { assertNever } from 'circumspect';
 import { createBrowserHistory, createHashHistory, createMemoryHistory } from 'history';
-import { RouterHistory } from '../../types';
+import { RouterHistoryOption } from '../../types';
 
-export const createHistory = (routerHistory: RouterHistory) => {
-  if (routerHistory === 'browser') {
+export const createHistory = (routerHistoryOption: RouterHistoryOption) => {
+  if (routerHistoryOption === 'browser') {
     return createBrowserHistory();
   }
 
-  if (routerHistory === 'memory') {
+  if (routerHistoryOption === 'memory') {
     return createMemoryHistory();
   }
 
-  if (routerHistory === 'hash') {
+  if (routerHistoryOption === 'hash') {
     return createHashHistory();
   }
 
-  if (Array.isArray(routerHistory)) {
-    return createMemoryHistory(routerHistory[1]);
+  if (Array.isArray(routerHistoryOption)) {
+    return createMemoryHistory(routerHistoryOption[1]);
   }
 
-  return assertNever(routerHistory);
+  return assertNever(routerHistoryOption);
 };

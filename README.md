@@ -205,7 +205,7 @@ const router = createRouter([
 interface RouterOptions {
   defaultFallback?: ComponentType;
   errorFallback?: ComponentType<{ error: Error; retry: () => void }>;
-  history?: RouterHistory;
+  history?: RouterHistoryOption;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
   preloadOnLinkHover?: PreloadContentOption;
   preloadOnLinkPressIn?: PreloadContentOption;
@@ -217,7 +217,7 @@ interface RouterOptions {
 
 - `errorFallback?: ComponentType<{ error: Error; retry: () => void }>` is the error fallback component to show when an error occurs for some route, e.g., when the component or data for a route fails to load. This component is given two props: `error` and `retry`. `error` is the `Error` object and `retry` is a callback to retry loading the failed route. Generally, you should include a _Retry_ button in the error fallback, and pass `retry` as its `onClick` prop.
 
-- `history?: RouterHistory` (default: `'browser'`) specifies the type of history object to use for route navigation. The history object is created with the [`history` package](https://github.com/ReactTraining/history). `RouterHistory` can be one of the following:
+- `history?: RouterHistoryOption` (default: `'browser'`) specifies the type of history object to use for route navigation. The history object is created with the [`history` package](https://github.com/ReactTraining/history). `RouterHistoryOption` can be one of the following:
 
   - `'browser'` creates a `BrowserHistory` that uses the [History API](https://developer.mozilla.org/en-US/docs/Web/API/History_API). The current route's path will be the actual path in the URL. For example, if the domain is `https://example.com` and the route path is `/profile`, then the URL for the page will be `https://example.com/profile`.
   - `'hash'` creates a `HashHistory`. The current route's path will be in the hash portion of the URL. For example, if the domain is `https://example.com`, the path under which the page loads is `/`, and the route path is `/profile`, then the URL for the page will be `https://example.com/#/profile`.

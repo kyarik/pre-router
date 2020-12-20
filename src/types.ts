@@ -63,12 +63,12 @@ export type UseTransition = () => [(callback: () => void) => void, boolean];
 
 export type PreloadContentOption = 'code' | 'code-and-data' | 'none';
 
-export type RouterHistory = 'browser' | 'hash' | 'memory' | ['memory', MemoryHistoryOptions];
+export type RouterHistoryOption = 'browser' | 'hash' | 'memory' | ['memory', MemoryHistoryOptions];
 
 export interface RouterOptions {
   defaultFallback?: ComponentType;
   errorFallback?: ComponentType<{ error: Error; retry: () => void }>;
-  history?: RouterHistory;
+  history?: RouterHistoryOption;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
   preloadOnLinkHover?: PreloadContentOption;
   preloadOnLinkPressIn?: PreloadContentOption;
