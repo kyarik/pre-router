@@ -11,10 +11,7 @@ export interface Match {
   params: Record<string, string>;
 }
 
-export interface RouteComponentProps<
-  TPreloadedData = any,
-  TParams extends Record<string, string> = Record<string, string>
-> {
+export interface RouteComponentProps<TPreloadedData = any> {
   /**
    * The preloaded data returned by `preloadData`. If `preloadData` is not
    * specified for a route, then `preloadedData` is `undefined`.
@@ -24,7 +21,7 @@ export interface RouteComponentProps<
   /**
    * The values of the dynamic parameters in the `path`, if any.
    */
-  params: TParams;
+  params: Record<string, string>;
 
   /**
    * Any matching child routes that should be rendered inside the parent route.
@@ -32,15 +29,11 @@ export interface RouteComponentProps<
   children: ReactNode;
 }
 
-export type RouteComponent<
-  TPreloadedData = any,
-  TParams extends Record<string, string> = Record<string, string>
-> = ComponentType<RouteComponentProps<TPreloadedData, TParams>>;
+export type RouteComponent<TPreloadedData = any> = ComponentType<
+  RouteComponentProps<TPreloadedData>
+>;
 
-export type Route<
-  TPreloadedData = any,
-  TParams extends Record<string, string> = Record<string, string>
-> = {
+export type Route<TPreloadedData = any> = {
   /**
    * The path for which this route will match. Path parameters, even with
    * custom regular expressions, are supported.
@@ -50,7 +43,7 @@ export type Route<
   /**
    * The component to render for the route.
    */
-  component: RouteComponent<TPreloadedData, TParams>;
+  component: RouteComponent<TPreloadedData>;
 
   /**
    * Function used to preload data for the route whenever it matches. This
@@ -58,7 +51,7 @@ export type Route<
    * preloaded data in the form of a resource that the route component can
    * attempt to read and if it's not ready yet, the component suspends.
    */
-  preloadData?: (params: TParams) => TPreloadedData;
+  preloadData?: (params: Record<string, string>) => TPreloadedData;
 
   /**
    * The fallback component that will be shown while the component or data for
@@ -72,19 +65,13 @@ export type Route<
   routes?: Route[];
 };
 
-export interface MatchedRoute<
-  TPreloadedData = any,
-  TParams extends Record<string, string> = Record<string, string>
-> {
-  route: Route<TPreloadedData, TParams>;
+export interface MatchedRoute<TPreloadedData = any> {
+  route: Route<TPreloadedData>;
   match: Match;
 }
 
-export type PreloadedRoute<
-  TPreloadedData = any,
-  TParams extends Record<string, string> = Record<string, string>
-> = {
-  component: RouteComponent<TPreloadedData, TParams>;
+export type PreloadedRoute<TPreloadedData = any> = {
+  component: RouteComponent<TPreloadedData>;
   preloadedData: TPreloadedData;
   fallback?: ComponentType;
   match: Match;
