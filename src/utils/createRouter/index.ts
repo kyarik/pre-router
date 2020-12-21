@@ -14,6 +14,14 @@ import { getRouterOptionsWithDefaults } from '../getRouterOptionsWithDefaults';
 import { matchRoutes } from '../matchRoutes';
 import { preloadRoutes } from '../preloadRoutes';
 
+/**
+ * Creates a router with the specified routes. The main properties in the
+ * definition of each route are the path, the function to preload the data for
+ * the route, and the component to render for the route. The created `Router`
+ * object can then be passed to the `<PreRouter>` component.
+ * @param routes is an array with the definition of all routes.
+ * @param options are the router options.
+ */
 export const createRouter = (routes: Route[], options: RouterOptions = {}): Router => {
   const optionsWithDefaults = getRouterOptionsWithDefaults(options);
   const history = createHistory(optionsWithDefaults.history);

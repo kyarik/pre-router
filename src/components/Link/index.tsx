@@ -5,6 +5,11 @@ export interface LinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>,
   to: string;
 }
 
+/**
+ * Component that is used to create internal links. It accepts a `to` prop
+ * specifying a path, and any other prop that an `<a>` element would accept
+ * (except `href`).
+ */
 export const Link: FC<LinkProps> = ({
   to,
   target,

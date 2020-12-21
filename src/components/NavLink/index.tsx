@@ -5,6 +5,11 @@ import { Link, LinkProps } from '../Link';
 
 export type NavLinkProps = LinkProps;
 
+/**
+ * Behaves in the same way as `<Link>` but it adds an `active` class to the
+ * `className` of the rendered `<a>` element whenever the current path matches
+ * the path specified as the `to` prop.
+ */
 export const NavLink: FC<NavLinkProps> = ({ to, className, ...props }) => {
   const pathname = usePathname();
 
