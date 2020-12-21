@@ -158,8 +158,8 @@ createRouter(routes: Route[], options?: RouterOptions): Router
   - `path?: string` The path for which this route will match. Path parameters, even with custom regular expressions, are supported. For example, `/profile`, `/posts/:slug`, and `/@:username([a-z]+)` are all valid paths. If no `path` is specified, then this route will always match. This can be used for the `404` route for example. When `pre-router` matches routes against a path, it stops at the first match on each level. So, if you have routes with overllaping paths, e.g., `/about` and `/:username`, place the route with the more specific path, i.e., `/about`, before the route the generic path, i.e., `/:username`.
   - `preloadData?: (params: Record<string, string>) => any` is the function used to preload data for the route whenever it matches. This function is called with the route parameters and it should return the preloaded data in the form of a resource that the route component can attempt to read and if it's not ready yet, the component suspends.
   - `component: RouteComponent` is the component to render for the route. The component that is specified should be wrapped in `lazyComponent` so that it is code-split and it will start loading only when the route matches, in parallel with the data. (Remember that the component needs to be the `default` export when using `lazyComponent`.) This component will be passed the following props:
-    - `params` The values of the dynamic parameters in the `path`, if any. For example, if `path` is `/post/:slug`, then `params` could be `{ slug: 'an-interesting-post' }`.
     - `preloadedData` is the preloaded data returned by `preloadData`. If `preloadData` is not specified for a route, then `preloadedData` is `undefined`.
+    - `params` The values of the dynamic parameters in the `path`, if any. For example, if `path` is `/post/:slug`, then `params` could be `{ slug: 'an-interesting-post' }`.
     - `children` Any matching child routes that should be rendered inside the parent route.
   - `fallback?: ComponentType` is the optional fallback component that will be shown while the component or data for the route are still loading.
   - `routes?: Route[]` any children routes of the current route.
@@ -168,11 +168,11 @@ createRouter(routes: Route[], options?: RouterOptions): Router
 
 **Return value**
 
-- `Router` a [router object](#router) that should be passed as the `router` prop to the [`<PreRouter>`](#prerouter) component.
+- `Router` a [router object](#router) that can be passed as the `router` prop to the [`<PreRouter>`](#prerouter) component.
 
 **Description**
 
-`createRouter` is used to create a router by specifying the definition for all our app's routes. The main properties in the definition of each route are the path, the function to preload the data for the route, and the component to render for the route. The created `Router` object can then be passed to the `<PreRouter>` component.
+`createRouter` is used to create a router with the specified routes. The main properties in the definition of each route are the path, the function to preload the data for the route, and the component to render for the route. The created `Router` object can then be passed to the `<PreRouter>` component.
 
 **Example**
 
@@ -269,9 +269,9 @@ interface Router {
 
 - `getCurrentRouterEntry: () => RouterEntry` returns the current router entry, which consists of the location object and the preloaded routes for that location.
 
-- `isNextRouteTransitionEnabled: () => boolean;` returns whether the transition for the next route is enabled, i.e., whether there will be a delay in the next route update in order to avoid undesirable loading states. This is only applicable when you opt into route transitions by passing the [`useTransition` option](#routeroptions).
-
 - `history: BrowserHistory | MemoryHistory | HashHistory;` is the history object created with the `history` package, which provides the primitives for route navigation. This history object could be an instance of `BrowserHistory`, `MemoryHistory`, or `HashHistory`, depending on the [`history` option](#routeroptions).
+
+- `isNextRouteTransitionEnabled: () => boolean;` returns whether the transition for the next route is enabled, i.e., whether there will be a delay in the next route update in order to avoid undesirable loading states. This is only applicable when you opt into route transitions by passing the [`useTransition` option](#routeroptions).
 
 - `options: Required<RouterOptions>` are the options provided to `createRouter` populated with default values for all options that were omitted.
 
