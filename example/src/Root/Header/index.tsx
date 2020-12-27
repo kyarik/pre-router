@@ -1,7 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { NavLink } from 'pre-router';
+import { Resource } from 'suspendable';
 import { SignedInUser } from '~/types';
+import { HeaderLink } from './HeaderLink';
+import { HeaderUser } from './HeaderUser';
 
 const Container = styled.header`
   display: flex;
@@ -12,37 +14,19 @@ const Container = styled.header`
   padding: 0 32px;
 `;
 
-const HeaderLink = styled(NavLink)`
-  color: black;
-  font-size: 20px;
-  text-decoration: none;
-
-  &.active {
-    color: indigo;
-  }
-
-  & ~ & {
-    padding-left: 16px;
-  }
-`;
-
 interface Props {
-  signedInUser: SignedInUser;
+  signedInUserResource: Resource<SignedInUser>;
 }
 
-export const Header: React.VFC<Props> = ({ signedInUser }) => (
+export const Header: React.VFC<Props> = ({ signedInUserResource }) => (
   <Container>
     <nav>
       <HeaderLink to="/">Home</HeaderLink>
       <HeaderLink to="/profile">Profile</HeaderLink>
     </nav>
 
-    <div>
-      {signedInUser ? (
-        <span>Welcome {signedInUser.name}</span>
-      ) : (
-        <HeaderLink to="/sign-in">Sign in</HeaderLink>
-      )}
-    </div>
+    <React.Suspense fallback="Loading user...">
+      <HeaderUser signedInUserResource={signedInUserResource} />
+    </React.Suspense>
   </Container>
 );
