@@ -8,6 +8,30 @@ Once we begin rendering the matching routes, if the code or data has not finishe
 
 `pre-router` also gives you the ability to start loading code and data even before the user clicks on a link. If the user hovers over a link, there's a chance that they'll click it, so we could start loading the code for that route as soon as the user hovers. And if the user presses the mouse down on a link, there's a very good chance that they'll complete the click, so we could also start loading the data for the route as soon as the user presses in on the link.
 
+## Table of Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Preloading data](#preloading-data)
+  - [Route components](#route-components)
+  - [Defining routes](#defining-routes)
+  - [Rendering routes](#rendering-routes)
+- [API](#api)
+  - [`createRouter`](#createrouter)
+  - [`RouterOptions`](#routeroptions)
+  - [`PreloadContentOption`](#preloadcontentoption)
+  - [`Router`](#router)
+  - [`<PreRouter>`](#prerouter)
+  - [`<Link>`](#link)
+  - [`<NavLink>`](#navlink)
+  - [`<Redirect>`](#redirect)
+  - [`useRouter`](#userouter)
+  - [`usePathname`](#usepathname)
+  - [`useRouteTransitionPending`](#useroutetransitionpending)
+- [Prior art](#prior-art)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## Installation
 
 Using yarn:
@@ -139,18 +163,6 @@ const App = () => <PreRouter router={router} />;
 [Try it on CodeSandbox](https://codesandbox.io/s/pre-router-example-app-ubuc6)
 
 ## API
-
-- [`createRouter`](#createrouter)
-- [`RouterOptions`](#routeroptions)
-- [`PreloadContentOption`](#preloadcontentoption)
-- [`Router`](#router)
-- [`<PreRouter>`](#prerouter)
-- [`<Link>`](#link)
-- [`<NavLink>`](#navlink)
-- [`<Redirect>`](#redirect)
-- [`useRouter`](#userouter)
-- [`usePathname`](#usepathname)
-- [`useRouteTransitionPending`](#useroutetransitionpending)
 
 ### `createRouter`
 
