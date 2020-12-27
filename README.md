@@ -387,4 +387,4 @@ Please make sure to update the tests and the README as appropriate.
 
 ## License
 
-[MIT](https://github.com/kyarik/pre-router/blob/master/LICENSE)
+[MIT](https://github.com/kyarik/pre-router/blob/main/LICENSE)
