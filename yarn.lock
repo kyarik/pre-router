@@ -8140,10 +8140,10 @@ supports-hyperlinks@^2.0.0:
     has-flag "^4.0.0"
     supports-color "^7.0.0"
 
-suspendable@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/suspendable/-/suspendable-0.2.0.tgz#11cf0fc4c32875d32f13cf6125435ce73ce10a82"
-  integrity sha512-TLjEJwqrOe34t6cg4FZLPskwh3uUIHToonM3K3Dmzh1HDrRllJNR1ngFQWeq3S7Jpnn0MDUqskGlpQk5KyuyvQ==
+suspendable@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/suspendable/-/suspendable-0.3.0.tgz#3cea15581d58c77ce6e1b53551fc9e2e971b59ff"
+  integrity sha512-paVD2TYx1BrVVktT+ecR1F5FuL8D/bJTqfTfWqaWAQmjJo08V4WZ7CcvAics4BNQUA26CJ3RTlyWCbQX3p0ifA==
   dependencies:
     circumspect "^0.1.1"
 
