@@ -136,6 +136,8 @@ const router = createRouter(routes);
 const App = () => <PreRouter router={router} />;
 ```
 
+[Try it on CodeSandbox](https://codesandbox.io/s/pre-router-example-app-ubuc6)
+
 ## API
 
 - [`createRouter`](#createrouter)
