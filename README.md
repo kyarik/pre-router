@@ -146,6 +146,9 @@ const App = () => <PreRouter router={router} />;
 - [`<Link>`](#link)
 - [`<NavLink>`](#navlink)
 - [`<Redirect>`](#redirect)
+- [`useRouter`](#userouter)
+- [`usePathname`](#usepathname)
+- [`useRouteTransitionPending`](#useroutetransitionpending)
 
 ### `createRouter`
 
