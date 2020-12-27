@@ -51,7 +51,7 @@ If you want to use a fetching library that is not compatible with React Suspense
 For each route, we need to specify a component, which needs to be the `default` export. For example:
 
 ```tsx
-const PostPage: RouteComponent<PreloadedPostData> = ({ preloadedData, params }) => {
+const PostPage: RouteComponent<PreloadedPost> = ({ preloadedData, params }) => {
   const post = preloadedData.read();
 
   if (!post) {
@@ -100,10 +100,12 @@ Even though all routes can be specified top-level, most apps have a container ar
 const Root: RouteComponent = ({ children }) => (
   <>
     <Header />
-    <Body>{children}</Body>
+    <Content>{children}</Content>
     <Footer />
   </>
 );
+
+export default Root;
 ```
 
 and define it as the top-level route that always matches (so, no `path` is specified) with all the other routes defined as child routes:
@@ -134,6 +136,8 @@ const router = createRouter(routes);
 const App = () => <PreRouter router={router} />;
 ```
 
+[Try it on CodeSandbox](https://codesandbox.io/s/pre-router-example-app-ubuc6)
+
 ## API
 
 - [`createRouter`](#createrouter)
@@ -144,6 +148,9 @@ const App = () => <PreRouter router={router} />;
 - [`<Link>`](#link)
 - [`<NavLink>`](#navlink)
 - [`<Redirect>`](#redirect)
+- [`useRouter`](#userouter)
+- [`usePathname`](#usepathname)
+- [`useRouteTransitionPending`](#useroutetransitionpending)
 
 ### `createRouter`
 
