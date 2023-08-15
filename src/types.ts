@@ -179,16 +179,16 @@ export interface Router {
 
   /**
    * Preloads the specified `content` for the given path before the navigation
-   * to that path actually occurs. Note that if the specified `content` is
-   * already loaded or is loading for the given `path`, then this function has
-   * no effect.
+   * to that path actually occurs. Note that if the specified `content` has
+   * already loaded or is still loading for the given `path`, then this function
+   * has no effect.
    */
   preloadBeforeNavigation: (path: string, content: PreloadContentOption) => void;
 
   /**
    * Refreshes the current router entry by preloading again the components and
-   * data for the current entry. Note that if the components already loaded or
-   * are still loading, then preloading them again will have no effect.
+   * data for the current entry. Note that if the components have already loaded
+   * or are still loading, then preloading them again will have no effect.
    */
   refreshCurrentRouterEntry: () => void;
 
